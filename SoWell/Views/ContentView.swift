@@ -40,7 +40,7 @@ struct ContentView: View {
                         label: "",
                         isSelected: selectedTab == 1,
                         action: { selectedTab = 1 },
-                        sizeMultiplier: 2.5 // 2x bigger
+                        sizeMultiplier: 2.5 // 2.5x bigger
                     )
                     
                     // Chart tab (normal size)
