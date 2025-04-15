@@ -3,28 +3,33 @@ import SwiftUI
 struct HomepageView: View {
     let username = "Michael"
     @State private var selectedMood: Mood? = Mood.all.first { $0.label == "Excellent" }
+    @State private var currentMood: Mood = Mood.all.first!
 
     var body: some View {
         ZStack {
             Color.AppColor.background
                 .ignoresSafeArea()
             VStack {
-                
                 Text(currentDateString())
                     .font(AppFont.footnote)
                     .foregroundColor(.gray)
                     .padding(.top, 8)
                     .padding(.horizontal, 24)
-                
-                Text("\(greeting()), \(username) \(greetingIcon())")
+                HStack {
+                    (
+                        Text("\(greeting()), ") +
+                        Text(username).font(AppFont.h2Bold) +
+                        Text(" \(greetingIcon())")
+                    )
                     .font(AppFont.h2)
-                    .fontWeight(.regular)
                     .padding(.horizontal, 24)
+                    .padding(.top, 8)
+                }
+
                 
                 Text("How are you today?")
                     .font(AppFont.body)
-                    .padding(.vertical, 8)
-                    .padding(.horizontal, 8)
+                    .padding(.vertical, 16)
                 
                 VStack {
                     SelectedMoodDisplay(mood: $selectedMood)
@@ -35,18 +40,23 @@ struct HomepageView: View {
                 }
                 .padding(.bottom, 16.0)
                 
-                PrimaryButton(label: "Confirm Mood") {
-                    // Save mood or go to next screen
+
+                NavigationLink(destination: MoodReview(selectedMood: selectedMood ?? Mood.all.first!)) {
+                    PrimaryButton(label: "Track Mood")
                 }
+
+
+                
+                Spacer()
+                
             }
-            Spacer()
         }
     }
-
+    
     //logic
     private func greeting() -> String {
         let hour = Calendar.current.component(.hour, from: Date())
-
+        
         switch hour {
         case 0..<12:
             return "Good Morning"
@@ -56,11 +66,11 @@ struct HomepageView: View {
             return "Good Evening"
         }
     }
-
+    
     // Choose emoji by hour
     private func greetingIcon() -> String {
         let hour = Calendar.current.component(.hour, from: Date())
-
+        
         switch hour {
         case 0..<12:
             return "☀️"
@@ -70,7 +80,7 @@ struct HomepageView: View {
             return "🌛"
         }
     }
-
+    
     private func currentDateString() -> String {
         let formatter = DateFormatter()
         formatter.dateFormat = "EEEE d MMMM yyyy"
@@ -81,5 +91,8 @@ struct HomepageView: View {
 
 
 #Preview {
-    HomepageView()
+    NavigationStack {
+        HomepageView()
+    }
 }
+

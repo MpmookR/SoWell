@@ -19,7 +19,7 @@ struct SelectedMoodDisplay: View {
                     Image(mood.imageName)
                         .resizable()
                         .aspectRatio(contentMode: .fit)
-                        .frame(width: 120, height: 120)
+                        .frame(width: 150, height: 150)
                         .clipShape(Circle())
                         .overlay(
                             Circle()

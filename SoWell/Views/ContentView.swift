@@ -9,16 +9,25 @@ struct ContentView: View {
         GeometryReader { geometry in
             VStack(spacing: 0) {
                 // Main content area
+                //custom tabview will need the NavigationStack to wrap each view
                 ZStack {
                     switch selectedTab {
                     case 0:
-                        CalendarView()
+                        NavigationStack {
+                            CalendarView()
+                        }
                     case 1:
-                        HomepageView()
+                        NavigationStack {
+                            HomepageView()
+                        }
                     case 2:
-                        ChartView()
+                        NavigationStack {
+                            ChartView()
+                        }
                     default:
-                        HomepageView()
+                        NavigationStack {
+                            HomepageView()
+                        }
                     }
                 }
                 .frame(maxHeight: .infinity)
@@ -34,7 +43,7 @@ struct ContentView: View {
                         sizeMultiplier: 1.0
                     )
                     
-                    // Home tab (2x bigger)
+                    // Home tab
                     TabButton(
                         icon: Image("logo").resizable(),
                         label: "",
