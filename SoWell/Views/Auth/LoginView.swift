@@ -9,64 +9,43 @@ import SwiftUI
 
 struct LoginView: View {
     
-    // MARK: - Reusable Input Field View
-    func inputField(label: String, placeholder: String, systemImage: String) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text(label)
-                .font(.custom("SF Pro", size: 17))
-                .foregroundColor(.black)
-            
-            HStack(spacing: 20) {
-                Label(placeholder, systemImage: systemImage)
-                    .font(.custom("SF Pro", size: 17))
-                    .foregroundColor(Color(white: 0.85))
-                    .frame(maxWidth: .infinity, alignment: .leading)
-            }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 8)
-            .background(Color(white: 0.99))
-            .overlay(
-                RoundedRectangle(cornerRadius: 21)
-                    .stroke(Color(white: 0.85), lineWidth: 1)
-            )
-        }
-    }
-    
     var body: some View {
         VStack(alignment: .center, spacing: 30) {
             
             // Welcome Section
             VStack(alignment: .leading, spacing: 8) {
                 Text("Welcome")
-                    .font(.custom("SF Compact Rounded", size: 24).weight(.semibold))
-                    .foregroundColor(.black)
+                    .font(AppFont.h1)
+                    .foregroundColor(Color.AppColor.black)
                 
-                Text("Begin on your mindfulness journey.")
-                    .font(.custom("SF Compact Rounded", size: 17))
-                    .foregroundColor(.black)
+                Text("Begin on your mindfulness journey")
+                    .font(AppFont.caption)
+                    .foregroundColor(Color.AppColor.black)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal)
             
             // Logo
-            ZStack {
+            VStack {
                 Image("sowell_logo")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 169, height: 142)
             }
-            .frame(width: 408, height: 250)
-            .background(Color(red: 1, green: 0.99, blue: 0.96))
+            .frame(width: 380, height: 250)
+            .background(Color.AppColor.background)
             .cornerRadius(21)
             .overlay(
                 RoundedRectangle(cornerRadius: 21)
-                    .stroke(Color(red: 0.25, green: 0.23, blue: 0.17), lineWidth: 1)
+                    .stroke(Color.AppColor.frame, lineWidth: 1)
             )
+            .frame(maxWidth: .infinity)
+
             
             // Input Fields
             VStack(spacing: 20) {
-                inputField(label: "Email Address", placeholder: "email123@gmail.com", systemImage: "envelope")
-                inputField(label: "Password", placeholder: "password", systemImage: "lock")
+                InputField(label: "Email Address", placeholder: "email123@gmail.com", systemImage: "envelope")
+                InputField(label: "Password", placeholder: "password", systemImage: "lock")
                 
                 Text("Forgot Password?")
                     .font(.custom("SF Compact Rounded", size: 11))
@@ -78,22 +57,22 @@ struct LoginView: View {
             
             // Login Button
             Button(action: {
-                // your login logic here
+                // login action
             }) {
                 Text("Login")
-                    .font(.custom("SF Pro", size: 17))
-                    .foregroundColor(.black)
+                    .font(AppFont.body)
+                    .foregroundColor(Color.AppColor.black)
                     .frame(maxWidth: .infinity)
                     .padding()
-                    .background(Color(red: 0.85, green: 0.93, blue: 1.0))
+                    .background(Color.AppColor.moodBlue)
                     .cornerRadius(21)
             }
             .padding(.horizontal)
             
             // OR Divider
             Text("or")
-                .font(.custom("SF Compact Rounded", size: 17))
-                .foregroundColor(.black)
+                .font(AppFont.body)
+                .foregroundColor(Color.AppColor.black)
                 .frame(maxWidth: .infinity, alignment: .center)
             
             // Social Buttons
@@ -106,10 +85,10 @@ struct LoginView: View {
                 }
                 .padding(10)
                 .frame(height: 36)
-                .background(Color(red: 0.96, green: 0.96, blue: 0.96))
+                .background(Color.gray.opacity(0.1))
                 .cornerRadius(99)
                 
-                // Hello login
+                // Google login
                 HStack {
                     Image("Gmail")
                         .resizable()
@@ -117,18 +96,14 @@ struct LoginView: View {
                 }
                 .padding(10)
                 .frame(height: 36)
-                .background(Color(red: 0.96, green: 0.96, blue: 0.96))
+                .background(Color.gray.opacity(0.1))
                 .cornerRadius(99)
             }
             .padding(.horizontal, 16)
         }
         .padding(.bottom, 70)
-        .background(Color.white)
+        .background(Color.AppColor.white)
     }
-}
-
-#Preview {
-    LoginView()
 }
 
 #Preview {
