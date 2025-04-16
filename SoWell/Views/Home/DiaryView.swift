@@ -2,11 +2,14 @@ import SwiftUI
 
 
 struct DiaryView: View {
-    let mood: Mood
-    @State private var diaryText: String = ""
     @Environment(\.presentationMode) var presentationMode
-    @FocusState private var isFocused: Bool
     
+    let mood: Mood
+    @Binding var diaryText: String
+    let date: Date
+    @ObservedObject var viewModel: CalendarViewModel
+    
+    @FocusState private var isFocused: Bool
     
     var body: some View {
         
@@ -80,21 +83,18 @@ struct DiaryView: View {
                         Spacer()
                         Button(action: {
                             let trimmedText = diaryText.trimmingCharacters(in: .whitespacesAndNewlines)
-                            
-                            if trimmedText.isEmpty {
-                                // Just dismiss, treat as no diary created
-                                presentationMode.wrappedValue.dismiss()
-                            } else {
-                                print("Diary saved: \(diaryText)")
-                                presentationMode.wrappedValue.dismiss()
+
+                            if !trimmedText.isEmpty {
+                                viewModel.trackMood(on: date, mood: mood, diary: trimmedText)
+                                print("Diary saved: \(trimmedText)")
                             }
+
+                            presentationMode.wrappedValue.dismiss()
                             hideKeyboard()
-                        })
-                        {
+                        }) {
                             PrimaryButton(label: "save")
                         }
-                        
-                        
+
                         Spacer()
                     }
 //                    .padding(.bottom, 90)

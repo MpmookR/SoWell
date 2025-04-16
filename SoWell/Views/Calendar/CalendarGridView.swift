@@ -28,7 +28,7 @@ struct CalendarGridView: View {
                             Image(entry.mood.imageName)
                                 .resizable()
                                 .scaledToFit()
-                                .frame(width: 20, height: 20)
+                                .frame(width: 24, height: 24)
                         }
                     }
                     .frame(width: 36, height: 48)

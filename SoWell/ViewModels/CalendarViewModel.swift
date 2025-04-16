@@ -7,42 +7,86 @@
 
 import Foundation
 import SwiftUI
+import SwiftData
 
 class CalendarViewModel: ObservableObject {
     @Published var entries: [Date: MoodEntry] = [:]
     
+    private var modelContext: ModelContext
+
+    init(modelContext: ModelContext) {
+            self.modelContext = modelContext
+            loadFromStorage()
+        }
     
-    //hardcorded to test
-    init() {
-            preloadTestEntries()
+    func updateContextIfNeeded(_ context: ModelContext) {
+        if modelContext !== context {
+            self.modelContext = context
+            loadFromStorage()
         }
+    }
 
-        private func preloadTestEntries() {
-            let today = Calendar.current.startOfDay(for: Date())
-            let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: today)!
-            let twoDaysAgo = Calendar.current.date(byAdding: .day, value: -2, to: today)!
-
-            entries[today] = MoodEntry(date: today, mood: Mood.all[1], diaryText: "Felt good today!")
-            entries[yesterday] = MoodEntry(date: yesterday, mood: Mood.all[2], diaryText: "Was a chill day.")
-            entries[twoDaysAgo] = MoodEntry(date: twoDaysAgo, mood: Mood.all[4], diaryText: "Meh, could’ve been better.")
-        }
-
-    /// Normalize to start of day to avoid time mismatches
+    // Normalize to start of day to avoid time mismatches
     private func normalized(_ date: Date) -> Date {
         Calendar.current.startOfDay(for: date)
     }
 
-    /// Check if there's an entry for a specific date
+    //Check if there's an entry for a specific date
     func entry(for date: Date) -> MoodEntry? {
         entries[normalized(date)]
     }
 
-    /// Add or update a mood entry
+    //Add or update a mood entry
     func trackMood(on date: Date, mood: Mood, diary: String) {
-        let day = normalized(date)
-        let entry = MoodEntry(date: day, mood: mood, diaryText: diary)
-        entries[day] = entry
-    }
+           let day = normalized(date)
+           
+           let descriptor = FetchDescriptor<MoodEntryModel>(
+               predicate: #Predicate { $0.date == day }
+           )
+           
+           do {
+               if let existing = try modelContext.fetch(descriptor).first {
+                   existing.moodLabel = mood.label
+                   existing.imageName = mood.imageName
+                   existing.diaryText = diary
+               } else {
+                   let entry = MoodEntryModel(
+                       date: day,
+                       moodLabel: mood.label,
+                       imageName: mood.imageName,
+                       diaryText: diary
+                   )
+                   modelContext.insert(entry)
+               }
+               
+               // Save to in-memory for UI
+               entries[day] = MoodEntry(date: day, mood: mood, diaryText: diary)
+           } catch {
+               print("Error saving mood entry: \(error)")
+           }
+       }
+
+    func loadFromStorage() {
+            do {
+                let descriptor = FetchDescriptor<MoodEntryModel>()
+                let stored = try modelContext.fetch(descriptor)
+                print("Loaded \(stored.count) stored mood entries")
+
+                for item in stored {
+                    let day = normalized(item.date)
+                    if let mood = Mood.all.first(where: { $0.label == item.moodLabel }) {
+                        entries[day] = MoodEntry(date: day, mood: mood, diaryText: item.diaryText)
+                    } else {
+                        print("No mood matched \(item.moodLabel)")
+                    }
+                }
+            } catch {
+                print("Error loading from storage: \(error)")
+            }
+        }
+
+
+
 
     /// For UI: check if a date is tracked
     func isDateTracked(_ date: Date) -> Bool {

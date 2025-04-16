@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 @main
 struct SoWellApp: App {
@@ -13,5 +14,6 @@ struct SoWellApp: App {
         WindowGroup {
             ContentView()
         }
+        .modelContainer(for: MoodEntryModel.self)
     }
 }

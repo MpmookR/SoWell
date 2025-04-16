@@ -1,9 +1,13 @@
 import SwiftUI
+import SwiftData
 
 struct HomepageView: View {
     let username = "Michael"
+    @ObservedObject var viewModel: CalendarViewModel
+
     @State private var selectedMood: Mood? = Mood.all.first { $0.label == "Excellent" }
     @State private var currentMood: Mood = Mood.all.first!
+    @State private var trackingDate: Date = Date()
 
     var body: some View {
         ZStack {
@@ -40,11 +44,21 @@ struct HomepageView: View {
                 }
                 .padding(.bottom, 16.0)
                 
-
-                NavigationLink(destination: MoodReview(selectedMood: selectedMood ?? Mood.all.first!)) {
+                //Passing date, seleted mood to MoodReview page
+                NavigationLink(
+                    destination: MoodReview(
+                        date: Date(),
+                        initialMood: selectedMood,
+                        isNewEntry: true,
+                        viewModel: viewModel
+                    )
+                ) {
                     PrimaryButton(label: "Track Mood")
                 }
 
+                .onTapGesture {
+                    trackingDate = Date() // lock the date when user taps
+                }
 
                 
                 Spacer()
@@ -91,8 +105,14 @@ struct HomepageView: View {
 
 
 #Preview {
-    NavigationStack {
-        HomepageView()
-    }
+    let container = try! ModelContainer(for: MoodEntryModel.self)
+    let context = container.mainContext
+    let viewModel = CalendarViewModel(modelContext: context)
+
+    return HomepageView(viewModel: viewModel)
+        .modelContainer(container)
 }
+
+
+
 
