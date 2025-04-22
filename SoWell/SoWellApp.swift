@@ -10,9 +10,12 @@ import SwiftData
 
 @main
 struct SoWellApp: App {
+    @StateObject var authVM = AuthViewModel()
     var body: some Scene {
         WindowGroup {
             ContentView()
+            RegisterView()
+                .environmentObject(authVM)
         }
         .modelContainer(for: MoodEntryModel.self)
     }

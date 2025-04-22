@@ -8,9 +8,12 @@
 import SwiftUI
 
 struct LoginView: View {
+    @State private var email = ""
+    @State private var password = ""
+    @State private var isSecure = false
     
     var body: some View {
-        VStack(alignment: .center, spacing: 30) {
+        VStack(alignment: .center, spacing: 15) {
             
             // Welcome Section
             VStack(alignment: .leading, spacing: 8) {
@@ -40,17 +43,19 @@ struct LoginView: View {
                     .stroke(Color.AppColor.frame, lineWidth: 1)
             )
             .frame(maxWidth: .infinity)
-
+            
             
             // Input Fields
             VStack(spacing: 20) {
-                InputField(label: "Email Address", placeholder: "email123@gmail.com", systemImage: "envelope")
-                InputField(label: "Password", placeholder: "password", systemImage: "lock")
+                InputField(label: "Email Address", placeholder: "email123@gmail.com", systemImage: "envelope", text: $email)
+                
+                InputField(label: "Password", placeholder: "password", systemImage: "lock", text: $password, isSecure: true)
                 
                 Text("Forgot Password?")
-                    .font(.custom("SF Compact Rounded", size: 11))
-                    .multilineTextAlignment(.center)
-                    .foregroundColor(.black)
+                    .font(AppFont.tiny)
+                    .foregroundColor(.AppColor.black)
+                    .frame(maxWidth: .infinity, alignment: .trailing)
+                
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal)
@@ -100,7 +105,22 @@ struct LoginView: View {
                 .cornerRadius(99)
             }
             .padding(.horizontal, 16)
+            
+            Text("By continuing, you agree to MoodApp Terms of Service and acknowledge you've read our Privacy Policy. Notice at collection.")
+                .font(AppFont.tiny)
+                .multilineTextAlignment(.center)
+                .foregroundColor(.AppColor.black)
+                .padding(.horizontal)
+                .frame(width: 350, alignment: .top)
+            
+            Text("Not on SoWell yet? Sign up")
+                .font(AppFont.tiny)
+                .multilineTextAlignment(.center)
+                .foregroundColor(.AppColor.black)
+                .frame(maxWidth: .infinity)
+            
         }
+        .padding(.top, 40)
         .padding(.bottom, 70)
         .background(Color.AppColor.white)
     }

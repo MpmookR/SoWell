@@ -19,6 +19,8 @@ struct ContentView: View {
         
         GeometryReader { geometry in
             VStack(spacing: 0) {
+               
+
                 // Main content area
                 //custom tabview will need the NavigationStack to wrap each view
                 
