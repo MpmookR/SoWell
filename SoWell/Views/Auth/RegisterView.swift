@@ -57,7 +57,9 @@ struct RegisterView: View {
                             confirmPassword: confirmPassword
                         )
                         if success {
-                            navigateToSuccess = true
+                            withAnimation {
+                                authVM.currentScreen = .home
+                            }
                         } else {
                             showAlert = true
                         }
@@ -104,13 +106,25 @@ struct RegisterView: View {
                         .frame(width: 350, alignment: .top)
                     
                     // Navigation to login
-                    NavigationLink(destination: LoginView()) {
-                        Text("Already have an account? Log In")
+                    HStack(spacing: 4) {
+                        Text("Already have an account?")
                             .font(AppFont.tiny)
-                            .multilineTextAlignment(.center)
                             .foregroundColor(.AppColor.black)
-                            .frame(maxWidth: .infinity)
+                        
+                        Text("Log In")
+                            .font(AppFont.tiny)
+                            .lineLimit(0)
+                            .fontWeight(.bold )
+                            .foregroundColor(.blue)
+                            .onTapGesture {
+                                withAnimation {
+                                    authVM.currentScreen = .login
+                                }
+                            }
+
                     }
+                    .frame(maxWidth: .infinity)
+                    .multilineTextAlignment(.center)
                 }
                 .padding(.horizontal)
                 .padding(.top, 40)

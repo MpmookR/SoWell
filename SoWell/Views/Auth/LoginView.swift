@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct LoginView: View {
+    @EnvironmentObject var authVM: AuthViewModel
     @State private var email = ""
     @State private var password = ""
     @State private var isSecure = false
@@ -62,17 +63,21 @@ struct LoginView: View {
             
             // Login Button
             Button(action: {
-                // login action
-            }) {
-                Text("Login")
-                    .font(AppFont.body)
-                    .foregroundColor(Color.AppColor.black)
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(Color.AppColor.moodBlue)
-                    .cornerRadius(21)
-            }
-            .padding(.horizontal)
+                let success = authVM.login(email: email, password: password)
+                if success {
+                    withAnimation {
+                        authVM.currentScreen = .home
+                    }
+                }}) {
+                    Text("Login")
+                        .font(AppFont.body)
+                        .foregroundColor(Color.AppColor.black)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.AppColor.moodBlue)
+                        .cornerRadius(21)
+                }
+                .padding(.horizontal)
             
             // OR Divider
             Text("or")
@@ -113,11 +118,24 @@ struct LoginView: View {
                 .padding(.horizontal)
                 .frame(width: 350, alignment: .top)
             
-            Text("Not on SoWell yet? Sign up")
-                .font(AppFont.tiny)
-                .multilineTextAlignment(.center)
-                .foregroundColor(.AppColor.black)
-                .frame(maxWidth: .infinity)
+            HStack(spacing: 4) {
+                Text("Not on SoWell yet?")
+                    .font(AppFont.tiny)
+                    .foregroundColor(.AppColor.black)
+                
+                Text("Sign up")
+                    .font(AppFont.tiny)
+                    .bold()
+                    .foregroundColor(.blue)
+                    .onTapGesture {
+                        withAnimation {
+                            authVM.currentScreen = .register
+                        }
+                    }
+                
+            }
+            .frame(maxWidth: .infinity)
+            .multilineTextAlignment(.center)
             
         }
         .padding(.top, 40)
@@ -128,4 +146,6 @@ struct LoginView: View {
 
 #Preview {
     LoginView()
+        .environmentObject(AuthViewModel()) // This avoids crashes
 }
+
