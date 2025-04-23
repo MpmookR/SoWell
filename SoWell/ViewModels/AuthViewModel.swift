@@ -14,6 +14,10 @@ class AuthViewModel: ObservableObject {
     @Published var isAuthenticated: Bool = false
     @Published var currentScreen: AuthScreen = .login // Default to login
     
+    enum AuthScreen {
+        case login, register, loading, home
+    }
+    
     
     func register(firstName: String, lastName: String, email: String, password: String, confirmPassword: String) -> Bool {
         // validate fields

@@ -1,10 +1,3 @@
-//
-//  RegisterView.swift
-//  SoWell
-//
-//  Created by Mook Rattana on 14/04/2025.
-//
-
 import SwiftUI
 
 struct RegisterView: View {
@@ -15,138 +8,147 @@ struct RegisterView: View {
     @State private var password = ""
     @State private var confirmPassword = ""
     @State private var showAlert = false
-    @State private var navigateToSuccess = false
-    
+
     var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 16) {
-                    // Title
-                    Text("Create account")
-                        .font(
-                            Font.custom("SF Compact Rounded", size: 24)
-                                .weight(.semibold)
-                        )
-                        .foregroundColor(.black)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                    
-                    // Subtitle
-                    //                    Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ")
-                    //                        .font(Font.custom("SF Compact Rounded", size: 17))
-                    //                        .foregroundColor(.black)
-                    //                        .frame(maxWidth: .infinity, alignment: .topLeading)
-                    
-                    // Input Fields
-                    VStack(alignment: .leading, spacing: 16) {
-                        InputField(label: "First Name", placeholder: "", systemImage: "person.fill", text: $firstName)
-                        InputField(label: "Last Name", placeholder: "", systemImage: "person.fill", text: $lastName)
-                        InputField(label: "Email", placeholder: "", systemImage: "envelope.fill", text: $email)
-                        InputField(label: "Password", placeholder: "", systemImage: "lock.fill", text: $password, isSecure: true)
-                        InputField(label: "Confirm Password", placeholder: "", systemImage: "lock.fill", text: $confirmPassword, isSecure: true)
-                    }
-                    .padding(10)
-                    .frame(maxWidth: .infinity, alignment: .topLeading)
-                    
-                    // Sign Up Button
-                    CustomButton(label: "Sign Up") {
-                        let success = authVM.register(
-                            firstName: firstName,
-                            lastName: lastName,
-                            email: email,
-                            password: password,
-                            confirmPassword: confirmPassword
-                        )
-                        if success {
+        VStack(alignment: .center, spacing: 15) {
+            
+            // Welcome Section
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Create Account")
+                    .font(AppFont.h1)
+                    .foregroundColor(Color.AppColor.frame)
+
+                Text("Let’s get started with your mindfulness journey")
+                    .font(AppFont.caption)
+                    .foregroundColor(Color.AppColor.frame)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal)
+            .padding(.top, 32)
+            
+            // Input Fields
+            VStack(spacing: 16) {
+                InputField(label: "First Name", placeholder: "", systemImage: "person", text: $firstName)
+                InputField(label: "Last Name", placeholder: "", systemImage: "person", text: $lastName)
+                InputField(label: "Email", placeholder: "email@example.com", systemImage: "envelope", text: $email)
+                InputField(label: "Password", placeholder: "••••••••", systemImage: "lock", text: $password, isSecure: true)
+                InputField(label: "Confirm Password", placeholder: "••••••••", systemImage: "lock", text: $confirmPassword, isSecure: true)
+            }
+            .padding(.horizontal)
+            .padding(.vertical, 32)
+            
+            // Sign Up Button
+            VStack(spacing: 8) {
+                Button(action: {
+                    let success = authVM.register(
+                        firstName: firstName,
+                        lastName: lastName,
+                        email: email,
+                        password: password,
+                        confirmPassword: confirmPassword
+                    )
+                    if success {
+                        withAnimation {
+                            authVM.currentScreen = .loading // Show loading video first
+                        }
+
+                        // Delay before transitioning to home
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
                             withAnimation {
                                 authVM.currentScreen = .home
                             }
-                        } else {
-                            showAlert = true
                         }
+                    } else {
+                        showAlert = true
                     }
-                    
-                    // OR Divider
-                    Text("or")
+                }) {
+                    Text("Sign Up")
                         .font(AppFont.body)
-                        .foregroundColor(Color.AppColor.black)
-                        .frame(maxWidth: .infinity, alignment: .center)
-                    
-                    // Social Buttons
-                    HStack(spacing: 16) {
-                        HStack {
-                            Image("AppleIcon")
-                                .resizable()
-                                .frame(width: 16, height: 18)
-                        }
-                        .padding(10)
-                        .frame(height: 36)
-                        .background(Color.gray.opacity(0.1))
-                        .cornerRadius(99)
-                        .frame(maxWidth: .infinity)
-                        
-                        HStack {
-                            Image("Gmail")
-                                .resizable()
-                                .frame(width: 16, height: 18)
-                        }
-                        .padding(10)
-                        .frame(height: 36)
-                        .background(Color.gray.opacity(0.1))
-                        .cornerRadius(99)
-                        .frame(maxWidth: .infinity)
-                    }
-                    .padding(.horizontal, 16)
-                    
-                    // Terms
-                    Text("By continuing, you agree to MoodApp Terms of Service and acknowledge you've read our Privacy Policy. Notice at collection.")
-                        .font(AppFont.tiny)
-                        .multilineTextAlignment(.center)
-                        .foregroundColor(.AppColor.black)
-                        .padding(.horizontal)
-                        .frame(width: 350, alignment: .top)
-                    
-                    // Navigation to login
-                    HStack(spacing: 4) {
-                        Text("Already have an account?")
-                            .font(AppFont.tiny)
-                            .foregroundColor(.AppColor.black)
-                        
-                        Text("Log In")
-                            .font(AppFont.tiny)
-                            .lineLimit(0)
-                            .fontWeight(.bold )
-                            .foregroundColor(.blue)
-                            .onTapGesture {
-                                withAnimation {
-                                    authVM.currentScreen = .login
-                                }
-                            }
-
-                    }
-                    .frame(maxWidth: .infinity)
-                    .multilineTextAlignment(.center)
+                        .foregroundColor(Color.AppColor.background)
+                        .frame(maxWidth: .infinity, minHeight: 44)
+                        .background(Color.AppColor.button)
+                        .cornerRadius(21)
                 }
                 .padding(.horizontal)
-                .padding(.top, 40)
-                .padding(.bottom, 70)
+                .alert(isPresented: $showAlert) {
+                    Alert(title: Text("Error"), message: Text(authVM.errorMessage), dismissButton: .default(Text("OK")))
+                }
+
+                // OR Divider
+                Text("or")
+                    .font(AppFont.footnote)
+                    .foregroundColor(Color.AppColor.black)
+                    .frame(maxWidth: .infinity, alignment: .center)
+
+                // Social Buttons
+                HStack(spacing: 8) {
+                    Button(action: {
+                        // Future Apple sign-in logic
+                    }) {
+                        Image("apple_logo")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 16, height: 16)
+                            .padding(10)
+                            .background(Color.gray.opacity(0.1))
+                            .cornerRadius(99)
+                    }
+                    .frame(height: 36)
+
+                    Button(action: {
+                        // Future Google sign-in logic
+                    }) {
+                        Image("gmail_logo")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 16, height: 16)
+                            .padding(10)
+                            .background(Color.gray.opacity(0.1))
+                            .cornerRadius(99)
+                    }
+                    .frame(height: 36)
+                }
+                .padding(.horizontal, 16)
             }
-            .background(Color.AppColor.white)
-            .alert(isPresented: $showAlert) {
-                Alert(
-                    title: Text("Error"),
-                    message: Text(authVM.errorMessage),
-                    dismissButton: .default(Text("OK"))
-                )
+
+            // Terms + Navigation to Login
+            VStack {
+                Text("By continuing, you agree to MoodApp Terms of Service and acknowledge you've read our Privacy Policy. Notice at collection.")
+                    .font(AppFont.tiny)
+                    .foregroundColor(.gray)
+                    .multilineTextAlignment(.center)
+                    .lineLimit(nil)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.horizontal, 16)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .padding([.leading, .bottom, .trailing], 16)
+
+                HStack(spacing: 4) {
+                    Text("Already have an account?")
+                        .font(AppFont.tiny)
+                        .foregroundColor(.gray)
+
+                    Text("Log In")
+                        .font(.footnote)
+                        .bold()
+                        .foregroundColor(Color.AppColor.frame)
+                        .onTapGesture {
+                            withAnimation {
+                                authVM.currentScreen = .login
+                            }
+                        }
+                }
+                .frame(maxWidth: .infinity)
+                .multilineTextAlignment(.center)
             }
-            .navigationDestination(isPresented: $navigateToSuccess) {
-                Text("Welcome, \(firstName)! 🎉")
-            }
+
+            Spacer()
         }
+        .background(Color.AppColor.white)
     }
 }
 
 #Preview {
-    
     RegisterView()
-        .environmentObject(AuthViewModel()) // //make sure the preview injects the //view model too!
+        .environmentObject(AuthViewModel())
 }

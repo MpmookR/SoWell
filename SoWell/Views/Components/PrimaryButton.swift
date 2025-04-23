@@ -45,17 +45,16 @@ struct PrimaryButton: View {
 }
 
 struct CustomButton: View {
-    let label: String
+    var label: String
     var action: () -> Void
-
+    
     var body: some View {
         Button(action: action) {
             Text(label)
                 .font(AppFont.body)
-                .foregroundColor(Color.AppColor.black)
-                .frame(maxWidth: .infinity)
-                .padding()
-                .background(Color.AppColor.moodBlue)
+                .foregroundColor(Color.AppColor.background)
+                .frame(maxWidth: .infinity, minHeight: 44)
+                .background(Color.AppColor.button)
                 .cornerRadius(21)
         }
         .padding(.horizontal)
