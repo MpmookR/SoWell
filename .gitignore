@@ -1,1 +1,11 @@
-Views/Calendar/
+//
+//  .gitignore
+//  SoWell
+//
+//  Created by Kayley on 23/04/2025.
+//
+
+*.xcuserstate
+*.xcuserdata
+*.xcuserdatad
+*.xcworkspace/xcuserdata/
