@@ -62,7 +62,7 @@ struct GroupedBarChartView: View {
             .padding(.horizontal)
         }
         .padding()
-        .background(Color(.systemGroupedBackground))
+        .background(Color.AppColor.background)
     }
 }
 

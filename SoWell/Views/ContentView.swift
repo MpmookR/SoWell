@@ -38,20 +38,7 @@ struct ContentView: View {
                         }
                     case 2:
                         NavigationStack {
-                            GroupedBarChartView(
-                                title: "Mood vs Steps",
-                                moodLabel: "Mood",
-                                metricLabel: "Steps (k)",
-                                metricColor: Color.green,
-                                data: ChartDataService.generateMoodAndStepsData().map {
-                                    GroupedMetricRecord(
-                                        date: $0.date,
-                                        mood: $0.mood,
-                                        metricValue: Double($0.steps) / 1000.0
-                                    )
-                                }
-                            )
-
+                            MultiChartDashboardView()
 
                         }
                     default:
