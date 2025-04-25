@@ -1,8 +1,10 @@
 import SwiftUI
 import SwiftData
+import FirebaseAuth
 
 struct HomepageView: View {
-    let username = "Michael"
+//    let username = "Michael"
+    @EnvironmentObject var authVM: AuthViewModel
     @ObservedObject var viewModel: CalendarViewModel
 
     @State private var selectedMood: Mood? = Mood.all.first { $0.label == "Excellent" }
@@ -14,15 +16,31 @@ struct HomepageView: View {
             Color.AppColor.background
                 .ignoresSafeArea()
             VStack {
-                Text(currentDateString())
-                    .font(AppFont.footnote)
-                    .foregroundColor(.gray)
-                    .padding(.top, 8)
-                    .padding(.horizontal, 24)
+                HStack {
+                    ZStack {
+                        Text(currentDateString())
+                            .font(AppFont.footnote)
+                            .foregroundColor(.gray)
+                    }
+                    .frame(maxWidth: .infinity)
+
+                    NavigationLink(destination: ProfileView()) {
+                        Circle()
+                            .fill(Color.AppColor.button)
+                            .frame(width: 30, height: 30)
+                            .overlay(
+                                Image(systemName: "person.fill")
+                                    .foregroundColor(Color.AppColor.white)
+                                    .font(.system(size: 14, weight: .bold))
+                            )
+                    }
+                }
+                .padding(.horizontal, 24)
+
                 HStack {
                     (
                         Text("\(greeting()), ") +
-                        Text(username).font(AppFont.h2Bold) +
+                        Text(authVM.currentUser?.firstName ?? "Unknown").font(AppFont.h2Bold) +
                         Text(" \(greetingIcon())")
                     )
                     .font(AppFont.h2)
