@@ -18,5 +18,8 @@ extension Color {
         static let moodPurple = Color(hex: "#5A314E")
         static let moodBlue = Color(hex: "#B3E5FC")
         static let moodPink = Color(hex: "#EFAFFF")
+        static let moodGreen = Color(hex: "#7BC96F")
+        static let moodTeal = Color(hex: "#4C9BAA")
+        static let moodGold = Color(hex: "#D9B25F")
     }
 }
