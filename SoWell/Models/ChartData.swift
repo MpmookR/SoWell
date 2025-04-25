@@ -22,4 +22,9 @@ struct StepsDataPoint: Identifiable {
     let date: Date
     let steps: Int
 }
+struct GroupedMetricRecord {
+    let date: Date
+    let mood: Double
+    let metricValue: Double
+}
 

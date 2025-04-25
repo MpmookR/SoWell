@@ -42,7 +42,7 @@ struct ContentView: View {
                                 title: "Mood vs Steps",
                                 moodLabel: "Mood",
                                 metricLabel: "Steps (k)",
-                                metricColor: .green,
+                                metricColor: Color.green,
                                 data: ChartDataService.generateMoodAndStepsData().map {
                                     GroupedMetricRecord(
                                         date: $0.date,

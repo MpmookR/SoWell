@@ -7,11 +7,11 @@
 import SwiftUI
 import Charts
 
-struct GroupedMetricRecord {
-    let date: Date
-    let mood: Double
-    let metricValue: Double
-}
+//struct GroupedMetricRecord {
+//    let date: Date
+//    let mood: Double
+//    let metricValue: Double
+//}
 
 struct GroupedBarChartView: View {
     let title: String
