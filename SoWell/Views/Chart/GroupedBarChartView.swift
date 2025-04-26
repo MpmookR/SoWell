@@ -7,11 +7,7 @@
 import SwiftUI
 import Charts
 
-//struct GroupedMetricRecord {
-//    let date: Date
-//    let mood: Double
-//    let metricValue: Double
-//}
+
 
 struct GroupedBarChartView: View {
     let title: String
@@ -28,7 +24,7 @@ struct GroupedBarChartView: View {
                 .padding(.horizontal)
 
             Chart {
-                ForEach(data, id: \ .date) { record in
+                ForEach(data, id: \.date) { record in
                     BarMark(
                         x: .value("Date", record.date, unit: .day),
                         y: .value("Value", record.mood)
@@ -72,8 +68,10 @@ struct GroupedBarChartView: View {
         moodLabel: "Mood",
         metricLabel: "Steps (k)",
         metricColor: Color.green,
-        data: ChartDataService.generateMoodAndStepsData().map {
-            GroupedMetricRecord(date: $0.date, mood: $0.mood, metricValue: Double($0.steps) / 1000.0)
-        }
+        data: [
+            GroupedMetricRecord(date: Date(), mood: 7.0, metricValue: 5.0),
+            GroupedMetricRecord(date: Calendar.current.date(byAdding: .day, value: -1, to: Date())!, mood: 6.5, metricValue: 6.0),
+            GroupedMetricRecord(date: Calendar.current.date(byAdding: .day, value: -2, to: Date())!, mood: 5.0, metricValue: 8.0)
+        ]
     )
 }

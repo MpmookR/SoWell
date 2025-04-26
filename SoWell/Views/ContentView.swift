@@ -38,12 +38,12 @@ struct ContentView: View {
                         }
                     case 2:
                         NavigationStack {
-                            MultiChartDashboardView()
+                            MultiChartDashboardView(modelContext: modelContext)
 
                         }
                     default:
                         NavigationStack {
-                            HomepageView(viewModel: calendarViewModel)
+                            Home    pageView(viewModel: calendarViewModel)
                         }
                     }
                 }
