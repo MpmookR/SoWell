@@ -8,7 +8,8 @@ struct LoginView: View {
     @State private var email = ""
     @State private var password = ""
     @State private var isSecure = false
-
+    @State private var showAlert = false
+    
     var body: some View {
         VStack(alignment: .center, spacing: 15) {
             
@@ -17,7 +18,7 @@ struct LoginView: View {
                 Text("Welcome")
                     .font(AppFont.h1)
                     .foregroundColor(Color.AppColor.frame)
-
+                
                 Text("Begin on your mindfulness journey")
                     .font(AppFont.caption)
                     .foregroundColor(Color.AppColor.frame)
@@ -25,13 +26,13 @@ struct LoginView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal)
             .padding(.top, 32)
-
+            
             // MARK: - Hero Image
             VStack {
                 Image("hero_login")
                     .resizable()
                     .scaledToFill()
-                    .frame(width: 380, height: 250)
+                    .frame(width: 360, height: 250)
                     .clipped()
                     .cornerRadius(21)
                     .overlay(
@@ -40,7 +41,7 @@ struct LoginView: View {
                     )
             }
             .frame(maxWidth: .infinity)
-
+            
             // MARK: - Input Fields
             VStack {
                 VStack {
@@ -69,21 +70,11 @@ struct LoginView: View {
             .padding(.horizontal)
             .padding(.vertical, 8)
             
-
+            
             // MARK: - Login Button & Apple Sign-In
             VStack(spacing: 12) {
                 Button(action: {
-                    let success = authVM.login(email: email, password: password)
-                    if success {
-                        withAnimation {
-                            authVM.currentScreen = .loading
-                        }
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                            withAnimation {
-                                authVM.currentScreen = .home
-                            }
-                        }
-                    }
+                    authVM.login(email: email, password: password)
                 }) {
                     Text("Log In")
                         .font(AppFont.body)
@@ -102,7 +93,13 @@ struct LoginView: View {
                     .environmentObject(authVM)
                     .padding(.horizontal)
             }
+            .onChange(of: authVM.errorMessage) {
+                if !authVM.errorMessage.isEmpty {
+                    showAlert = true
+                }
+            }
 
+            
             // MARK: - Footer
             VStack(spacing: 12) {
                 Text("By continuing, you agree to SoWell's Terms of Service and acknowledge you've read our Privacy Policy.")
@@ -110,12 +107,12 @@ struct LoginView: View {
                     .foregroundColor(.gray)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 16)
-
+                
                 HStack(spacing: 4) {
                     Text("Not on SoWell yet?")
                         .font(AppFont.tiny)
                         .foregroundColor(.gray)
-
+                    
                     Text("Sign up")
                         .font(.footnote)
                         .bold()
@@ -128,7 +125,7 @@ struct LoginView: View {
                 }
             }
             .padding(.bottom)
-
+            
             Spacer()
         }
         .background(Color.AppColor.white)

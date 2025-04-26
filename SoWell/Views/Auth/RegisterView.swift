@@ -41,41 +41,22 @@ struct RegisterView: View {
             // MARK: - Sign Up + Apple Sign-In
             VStack(spacing: 12) {
                 Button(action: {
-                    let success = authVM.register(
-                        firstName: firstName,
-                        lastName: lastName,
-                        email: email,
-                        password: password,
-                        confirmPassword: confirmPassword
-                    )
-                    if success {
-                        withAnimation {
-                            authVM.currentScreen = .loading
-                        }
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                            withAnimation {
-                                authVM.currentScreen = .home
-                            }
-                        }
-                    } else {
-                        showAlert = true
+                        authVM.register(
+                            firstName: firstName,
+                            lastName: lastName,
+                            email: email,
+                            password: password,
+                            confirmPassword: confirmPassword
+                        )
+                    }) {
+                        Text("Sign Up")
+                            .font(AppFont.body)
+                            .foregroundColor(Color.AppColor.background)
+                            .frame(maxWidth: .infinity, minHeight: 44)
+                            .background(Color.AppColor.button)
+                            .cornerRadius(21)
                     }
-                }) {
-                    Text("Sign Up")
-                        .font(AppFont.body)
-                        .foregroundColor(Color.AppColor.background)
-                        .frame(maxWidth: .infinity, minHeight: 44)
-                        .background(Color.AppColor.button)
-                        .cornerRadius(21)
-                }
-                .padding(.horizontal)
-                .alert(isPresented: $showAlert) {
-                    Alert(
-                        title: Text("Error"),
-                        message: Text(authVM.errorMessage),
-                        dismissButton: .default(Text("OK"))
-                    )
-                }
+                    .padding(.horizontal)
 
                 Text("or")
                     .font(AppFont.footnote)
@@ -85,6 +66,19 @@ struct RegisterView: View {
                     .environmentObject(authVM)
                     .padding(.horizontal)
             }
+            .alert(isPresented: $showAlert) {
+                Alert(
+                    title: Text("Error"),
+                    message: Text(authVM.errorMessage),
+                    dismissButton: .default(Text("OK"))
+                )
+            }
+            .onChange(of: authVM.errorMessage) {
+                if !authVM.errorMessage.isEmpty {
+                    showAlert = true
+                }
+            }
+
             .padding(.vertical, 16)
 
             // MARK: - Footer / Terms / Navigation

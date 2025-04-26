@@ -61,95 +61,103 @@ class AuthViewModel: ObservableObject {
         }
     }
 
-
-    func register(firstName: String, lastName: String, email: String, password: String, confirmPassword: String) -> Bool {
-        // validate fields
+    func register(firstName: String, lastName: String, email: String, password: String, confirmPassword: String) {
         guard !firstName.isEmpty,
               !lastName.isEmpty,
               !email.isEmpty,
               !password.isEmpty,
               !confirmPassword.isEmpty else {
             errorMessage = "All fields are required."
-            return false
+            return
         }
-
+        
         guard password == confirmPassword else {
             errorMessage = "Passwords do not match."
-            return false
+            return
+        }
+        
+        if password.count < 6 {
+            errorMessage = "Password must be at least 6 characters long."
+            return
         }
 
         Auth.auth().createUser(withEmail: email, password: password) { [weak self] result, error in
             if let error = error {
                 DispatchQueue.main.async {
-                    self?.errorMessage = error.localizedDescription
+                    self?.errorMessage = "Registration failed: \(error.localizedDescription)"
                 }
                 return
             }
-
-            guard let user = result?.user else { return }
             
-            // Save additional user info to Firestore
-                    let db = Firestore.firestore()
-                    db.collection("users").document(user.uid).setData([
-                        "firstName": firstName,
-                        "lastName": lastName,
-                        "email": email
-                    ]) { err in
-                        if let err = err {
-                            print("Error writing user to Firestore: \(err.localizedDescription)")
-                        } else {
-                            print("User saved to Firestore")
-                        }
-                    }
-
-            // Store current user locally
-                    DispatchQueue.main.async {
-                        self?.currentUser = UserModel(
-                            firstName: firstName,
-                            lastName: lastName,
-                            email: email,
-                            password: "" // don't store raw password
-                        )
-                        self?.isAuthenticated = true
-                        self?.currentScreen = .home
-                        self?.errorMessage = ""
-                    }
+            guard let user = result?.user else {
+                DispatchQueue.main.async {
+                    self?.errorMessage = "Failed to create user."
+                }
+                return
+            }
+            
+            let db = Firestore.firestore()
+            db.collection("users").document(user.uid).setData([
+                "firstName": firstName,
+                "lastName": lastName,
+                "email": email
+            ]) { err in
+                if let err = err {
+                    print("Error saving profile: \(err.localizedDescription)")
+                } else {
+                    print("User profile saved to Firestore")
+                }
+            }
+            
+            DispatchQueue.main.async {
+                self?.currentUser = UserModel(
+                    firstName: firstName,
+                    lastName: lastName,
+                    email: email,
+                    password: ""
+                )
+                self?.isAuthenticated = true
+                self?.currentScreen = .home
+                self?.errorMessage = ""
+            }
         }
-
-        return true // This returns immediately. Could be changed to use async if needed.
     }
 
     
     
-    func login(email: String, password: String) -> Bool {
+    func login(email: String, password: String) {
         guard !email.isEmpty, !password.isEmpty else {
             errorMessage = "Please fill in all fields."
-            return false
+            isAuthenticated = false
+            return
+        }
+
+        DispatchQueue.main.async {
+            self.currentScreen = .loading
         }
 
         Auth.auth().signIn(withEmail: email, password: password) { [weak self] result, error in
             if let error = error {
                 DispatchQueue.main.async {
-                    self?.errorMessage = error.localizedDescription
+                    self?.errorMessage = "Login failed: \(error.localizedDescription)"
+                    self?.isAuthenticated = false
+                    self?.currentScreen = .login
                 }
                 return
             }
 
-            guard let user = result?.user else { return }
-
-            DispatchQueue.main.async {
-                self?.currentUser = UserModel(
-                    firstName: "", // Optional: fetch from Firestore if needed
-                    lastName: "",
-                    email: user.email ?? "",
-                    password: password
-                )
-                self?.isAuthenticated = true
-                self?.currentScreen = .home
+            guard let user = result?.user else {
+                DispatchQueue.main.async {
+                    self?.errorMessage = "User not found."
+                    self?.isAuthenticated = false
+                    self?.currentScreen = .login
+                }
+                return
             }
-        }
 
-        return true
+            // ✅ Fetch user profile from Firestore
+            self?.handleFirebaseLogin(user: user)
+        }
     }
 
     
@@ -159,6 +167,3 @@ class AuthViewModel: ObservableObject {
         currentScreen = .login
     }
 }
-
-
-
