@@ -73,7 +73,7 @@ struct HomepageView: View {
                 ) {
                     PrimaryButton(label: "Track Mood")
                 }
-                
+                .padding(.top, -15)
                 .onTapGesture {
                     trackingDate = Date() // lock the date when user taps
                 }

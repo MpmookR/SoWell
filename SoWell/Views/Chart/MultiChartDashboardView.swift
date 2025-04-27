@@ -35,21 +35,20 @@ struct MultiChartDashboardView: View {
                     
                     moodTrendSection
                     
-                    
-                    
-                    groupedChartsSection
-                    
                     InsightsView(groupedInsights: [
                         ("Mood vs Steps", viewModel.moodStepInsights),
                         ("Mood vs Sleep", viewModel.moodSleepInsights)
                     ])
+                    
+                    groupedChartsSection
+                    
                 }
                 .padding(.horizontal)
                 .padding(.bottom, 32)
             }
             
             // Sticky Navbar on top
-            CustomNavBar(title: "Diary", showBackButton: false) {
+            CustomNavBar(title: "Chart", showBackButton: false) {
                 presentationMode.wrappedValue.dismiss()
             }
             .background(Color(.systemBackground)) // so it doesn't look transparent
@@ -81,7 +80,7 @@ struct MultiChartDashboardView: View {
                         x: .value("Date", item.date, unit: selectedPeriod == .year ? .month : .day),
                         y: .value("Mood", item.moodScore)
                     )
-                    .foregroundStyle(Color.purple)
+                    .foregroundStyle(Color.AppColor.moodPeach)
                 }
             }
             .chartYAxisLabel("Mood Score (1–10)")
@@ -96,7 +95,7 @@ struct MultiChartDashboardView: View {
             title: "Mood vs Steps (Past 7 Days)",
             moodLabel: "Mood",
             metricLabel: "Steps (k)",
-            metricColor: .green,
+            metricColor: Color.AppColor.moodPink,
             //            data: viewModel.moodAndStepsData
             data: generateMoodAndStepsData()
         )
@@ -105,36 +104,36 @@ struct MultiChartDashboardView: View {
             title: "Mood vs Sleep (Past 7 Days)",
             moodLabel: "Mood",
             metricLabel: "Sleep (hrs)",
-            metricColor: .blue,
+            metricColor: Color.AppColor.moodBlue,
             //            data: viewModel.moodAndSleepData
             data: generateMoodAndSleepData()
         )
     }
-
+    
     private func generateMoodAndStepsData() -> [GroupedMetricRecord] {
         if viewModel.useMockData {
             return viewModel.moodAndStepsData
         } else {
             return viewModel.moodData.map { mood in
                 let day = Calendar.current.startOfDay(for: mood.date)
-                            let steps = Double(healthKitViewModel.stepsLast7Days[day] ?? 0) / 1000.0
-                            return GroupedMetricRecord(date: mood.date, mood: mood.moodScore, metricValue: steps)
+                let steps = Double(healthKitViewModel.stepsLast7Days[day] ?? 0) / 1000.0
+                return GroupedMetricRecord(date: mood.date, mood: mood.moodScore, metricValue: steps)
             }
         }
     }
-
+    
     private func generateMoodAndSleepData() -> [GroupedMetricRecord] {
         if viewModel.useMockData {
             return viewModel.moodAndSleepData
         } else {
             return viewModel.moodData.map { mood in
                 let day = Calendar.current.startOfDay(for: mood.date)
-                           let sleep = healthKitViewModel.sleepLast7Days[day] ?? 0.0
-                           return GroupedMetricRecord(date: mood.date, mood: mood.moodScore, metricValue: sleep)
+                let sleep = healthKitViewModel.sleepLast7Days[day] ?? 0.0
+                return GroupedMetricRecord(date: mood.date, mood: mood.moodScore, metricValue: sleep)
             }
         }
     }
-
+    
 }
 
 #Preview {
@@ -146,10 +145,10 @@ struct MultiChartDashboardView: View {
     }
 }
 
-    //---helper
-    extension Date {
-        func isSameDay(as other: Date) -> Bool {
-            let cal = Calendar.current
-            return cal.isDate(self, inSameDayAs: other)
-        }
+//---helper
+extension Date {
+    func isSameDay(as other: Date) -> Bool {
+        let cal = Calendar.current
+        return cal.isDate(self, inSameDayAs: other)
     }
+}
