@@ -1,22 +1,19 @@
-//
-//  LoginView.swift
-//  SoWell
-//
-//  Created by Mook Rattana on 14/04/2025.
-//
-
 import SwiftUI
+//import AuthenticationServices    // for SignInWithAppleButton
+import CryptoKit                 // for hashing the nonce
+import FirebaseAuth              // for Firebase authentication
 
 struct LoginView: View {
     @EnvironmentObject var authVM: AuthViewModel
     @State private var email = ""
     @State private var password = ""
     @State private var isSecure = false
-    @State private var navigateToHome = false
+    @State private var showAlert = false
     
     var body: some View {
         VStack(alignment: .center, spacing: 15) {
-            // Welcome Section
+            
+            // MARK: - Welcome Section
             VStack(alignment: .leading, spacing: 8) {
                 Text("Welcome")
                     .font(AppFont.h1)
@@ -30,13 +27,12 @@ struct LoginView: View {
             .padding(.horizontal)
             .padding(.top, 32)
             
-            
-            // Logo
+            // MARK: - Hero Image
             VStack {
                 Image("hero_login")
                     .resizable()
                     .scaledToFill()
-                    .frame(width: 380, height: 250)
+                    .frame(width: 360, height: 250)
                     .clipped()
                     .cornerRadius(21)
                     .overlay(
@@ -46,102 +42,71 @@ struct LoginView: View {
             }
             .frame(maxWidth: .infinity)
             
-            
-            // Input Fields
-            VStack(spacing: 16) {
-                InputField(label: "Email Address", placeholder: "email123@gmail.com", systemImage: "envelope", text: $email)
-                
-                InputField(label: "Password", placeholder: "password", systemImage: "lock", text: $password, isSecure: true)
-                
+            // MARK: - Input Fields
+            VStack {
+                VStack {
+                    InputField(
+                        label: "Email Address",
+                        placeholder: "email123@gmail.com",
+                        systemImage: "envelope",
+                        text: $email
+                    )
+                    
+                    InputField(
+                        label: "Password",
+                        placeholder: "••••••••",
+                        systemImage: "lock",
+                        text: $password,
+                        isSecure: true,
+                        showToggle: true // Adds the eye icon
+                    )
+                }
+                .padding(.horizontal)
                 Text("Forgot Password?")
                     .font(AppFont.tiny)
                     .foregroundColor(.AppColor.button)
                     .frame(maxWidth: .infinity, alignment: .trailing)
-                
             }
             .padding(.horizontal)
-            .padding(.vertical, 32)
+            .padding(.vertical, 8)
             
-            // Login Button
-            VStack(spacing: 8) {
-                // Hidden navigation trigger
+            
+            // MARK: - Login Button & Apple Sign-In
+            VStack(spacing: 12) {
                 Button(action: {
-                        // Simulate a successful login
-                        let success = authVM.login(email: email, password: password)
-                        if success {
-                            withAnimation {
-                                authVM.currentScreen = .loading // Show loading video first
-                            }
+                    authVM.login(email: email, password: password)
+                }) {
+                    Text("Log In")
+                        .font(AppFont.body)
+                        .foregroundColor(Color.AppColor.background)
+                        .frame(maxWidth: .infinity, minHeight: 44)
+                        .background(Color.AppColor.button)
+                        .cornerRadius(21)
+                }
+                .padding(.horizontal)
 
-                            // Delay before transitioning to home
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                                withAnimation {
-                                    authVM.currentScreen = .home
-                                }
-                            }
-                        }
-                    }) {
-                        Text("Log In")
-                            .font(AppFont.body)
-                            .foregroundColor(Color.AppColor.background)
-                            .frame(maxWidth: .infinity, minHeight: 44)
-                            .background(Color.AppColor.button)
-                            .cornerRadius(21)
-                    }
-                    .padding(.horizontal)
-                
-                // OR Divider
                 Text("or")
                     .font(AppFont.footnote)
-                    .foregroundColor(Color.AppColor.black)
-                    .frame(maxWidth: .infinity, alignment: .center)
-                
-                // Social Buttons
-                HStack(spacing: 8) {
-                    // Apple login
-                    Button(action: {
-                        // Future Apple sign-in logic
-                    }) {
-                        Image("apple_logo")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 16, height: 16)
-                            .padding(10)
-                            .background(Color.gray.opacity(0.1))
-                            .cornerRadius(99)
-                    }
-                    .frame(height: 36)
-                    
-                    // Google login
-                    Button(action: {
-                        // Future Google sign-in logic
-                    }) {
-                        Image("gmail_logo")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 16, height: 16)
-                            .padding(10)
-                            .background(Color.gray.opacity(0.1))
-                            .cornerRadius(99)
-                    }
-                    .frame(height: 36)
-                }
-                .padding(.horizontal, 16)
+                    .foregroundColor(.gray)
+
+//                AppleButtonView()
+//                    .environmentObject(authVM)
+//                    .padding(.horizontal)
             }
-            
-            VStack {
-                VStack {
-                    Text("By continuing, you agree to MoodApp Terms of Service and acknowledge you've read our Privacy Policy. Notice at collection.")
-                        .font(AppFont.tiny)
-                        .foregroundColor(.gray)
-                        .multilineTextAlignment(.center)
-                        .lineLimit(nil)
-                        .fixedSize(horizontal: false, vertical: true)
-                        .padding(.horizontal, 16)
+            .onChange(of: authVM.errorMessage) {
+                if !authVM.errorMessage.isEmpty {
+                    showAlert = true
                 }
-                .frame(maxWidth: .infinity, alignment: .center)
-                .padding([.leading, .bottom, .trailing], 16)
-                
+            }
+
+            
+            // MARK: - Footer
+            VStack(spacing: 12) {
+                Text("By continuing, you agree to SoWell's Terms of Service and acknowledge you've read our Privacy Policy.")
+                    .font(AppFont.tiny)
+                    .foregroundColor(.gray)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 16)
                 
                 HStack(spacing: 4) {
                     Text("Not on SoWell yet?")
@@ -157,20 +122,20 @@ struct LoginView: View {
                                 authVM.currentScreen = .register
                             }
                         }
-                    
                 }
-                .frame(maxWidth: .infinity)
-                .multilineTextAlignment(.center)
-                
             }
+            .padding(.bottom)
+            
             Spacer()
         }
         .background(Color.AppColor.white)
+        .onTapGesture {
+            hideKeyboard()
+        }
     }
 }
 
 #Preview {
     LoginView()
-        .environmentObject(AuthViewModel()) // This avoids crashes
+        .environmentObject(AuthViewModel())
 }
-

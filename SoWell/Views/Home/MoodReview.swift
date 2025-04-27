@@ -40,7 +40,7 @@ struct MoodReview: View {
                     .padding(.horizontal, 24)
                     .padding(.top, 24)
 
-                    // MARK: - Entry Section 
+                    // MARK: - Entry Section
                     EntrySectionView(
                         date: date,
                         entry: (selectedMood != nil || !diaryText.isEmpty)
@@ -134,9 +134,3 @@ struct MoodReview: View {
     )
     .modelContainer(container)
 }
-
-
-
-
-
-

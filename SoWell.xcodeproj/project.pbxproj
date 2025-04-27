@@ -6,13 +6,34 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		40F6B3202DBA6D9600AF9E1A /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 40F6B31F2DBA6D9600AF9E1A /* FirebaseAuth */; };
+		40F6B3222DBA6D9600AF9E1A /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 40F6B3212DBA6D9600AF9E1A /* FirebaseCore */; };
+		40F6B3242DBA6D9600AF9E1A /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 40F6B3232DBA6D9600AF9E1A /* FirebaseFirestore */; };
+		40F6B3392DBAC57800AF9E1A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 40F6B3382DBAC57800AF9E1A /* GoogleService-Info.plist */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
-		407820E02DAD398B00BA0E85 /* SoWell.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SoWell.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		4089DE802DBAD1BA001FC317 /* SoWell.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SoWell.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		40F6B3382DBAC57800AF9E1A /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		9F133B002DBE519C0026E42F /* Exceptions for "SoWell" folder in "SoWell" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 407820DF2DAD398B00BA0E85 /* SoWell */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		407820E22DAD398B00BA0E85 /* SoWell */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				9F133B002DBE519C0026E42F /* Exceptions for "SoWell" folder in "SoWell" target */,
+			);
 			path = SoWell;
 			sourceTree = "<group>";
 		};
@@ -23,6 +44,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				40F6B3222DBA6D9600AF9E1A /* FirebaseCore in Frameworks */,
+				40F6B3202DBA6D9600AF9E1A /* FirebaseAuth in Frameworks */,
+				40F6B3242DBA6D9600AF9E1A /* FirebaseFirestore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -33,16 +57,9 @@
 			isa = PBXGroup;
 			children = (
 				407820E22DAD398B00BA0E85 /* SoWell */,
-				407820E12DAD398B00BA0E85 /* Products */,
+				40F6B3382DBAC57800AF9E1A /* GoogleService-Info.plist */,
+				4089DE802DBAD1BA001FC317 /* SoWell.app */,
 			);
-			sourceTree = "<group>";
-		};
-		407820E12DAD398B00BA0E85 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				407820E02DAD398B00BA0E85 /* SoWell.app */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -65,9 +82,12 @@
 			);
 			name = SoWell;
 			packageProductDependencies = (
+				40F6B31F2DBA6D9600AF9E1A /* FirebaseAuth */,
+				40F6B3212DBA6D9600AF9E1A /* FirebaseCore */,
+				40F6B3232DBA6D9600AF9E1A /* FirebaseFirestore */,
 			);
 			productName = SoWell;
-			productReference = 407820E02DAD398B00BA0E85 /* SoWell.app */;
+			productReference = 4089DE802DBAD1BA001FC317 /* SoWell.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -94,8 +114,11 @@
 			);
 			mainGroup = 407820D72DAD398B00BA0E85;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				40F6B31E2DBA6D9600AF9E1A /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+			);
 			preferredProjectObjectVersion = 77;
-			productRefGroup = 407820E12DAD398B00BA0E85 /* Products */;
+			productRefGroup = 407820D72DAD398B00BA0E85;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -109,6 +132,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				40F6B3392DBAC57800AF9E1A /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -249,10 +273,16 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = SoWell/SoWell.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = W26S42S9ZF;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = SoWell/Info.plist;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "We read your steps and sleep data to show wellness trends.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "We use health data to enhance mood tracking.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -264,8 +294,9 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = myk.SoWell;
+				PRODUCT_BUNDLE_IDENTIFIER = KM.SoWell;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -277,10 +308,16 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = SoWell/SoWell.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = W26S42S9ZF;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = SoWell/Info.plist;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "We read your steps and sleep data to show wellness trends.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "We use health data to enhance mood tracking.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -292,8 +329,9 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = myk.SoWell;
+				PRODUCT_BUNDLE_IDENTIFIER = KM.SoWell;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -322,6 +360,35 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		40F6B31E2DBA6D9600AF9E1A /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 11.12.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		40F6B31F2DBA6D9600AF9E1A /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 40F6B31E2DBA6D9600AF9E1A /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		40F6B3212DBA6D9600AF9E1A /* FirebaseCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 40F6B31E2DBA6D9600AF9E1A /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCore;
+		};
+		40F6B3232DBA6D9600AF9E1A /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 40F6B31E2DBA6D9600AF9E1A /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 407820D82DAD398B00BA0E85 /* Project object */;
 }

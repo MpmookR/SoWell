@@ -1,35 +1,53 @@
 import SwiftUI
 import SwiftData
+import FirebaseAuth
 
 struct HomepageView: View {
-    let username = "Michael"
+    //    let username = "Michael"
+    @EnvironmentObject var authVM: AuthViewModel
     @ObservedObject var viewModel: CalendarViewModel
-
+    @StateObject private var healthKitViewModel = HealthKitViewModel()
     @State private var selectedMood: Mood? = Mood.all.first { $0.label == "Excellent" }
     @State private var currentMood: Mood = Mood.all.first!
     @State private var trackingDate: Date = Date()
-
+    
     var body: some View {
         ZStack {
             Color.AppColor.background
                 .ignoresSafeArea()
             VStack {
-                Text(currentDateString())
-                    .font(AppFont.footnote)
-                    .foregroundColor(.gray)
-                    .padding(.top, 8)
-                    .padding(.horizontal, 24)
+                HStack {
+                    ZStack {
+                        Text(currentDateString())
+                            .font(AppFont.footnote)
+                            .foregroundColor(.gray)
+                    }
+                    .frame(maxWidth: .infinity)
+                    
+                    NavigationLink(destination: ProfileView()) {
+                        Circle()
+                            .fill(Color.AppColor.button)
+                            .frame(width: 30, height: 30)
+                            .overlay(
+                                Image(systemName: "person.fill")
+                                    .foregroundColor(Color.AppColor.white)
+                                    .font(.system(size: 14, weight: .bold))
+                            )
+                    }
+                }
+                .padding(.horizontal, 24)
+                
                 HStack {
                     (
                         Text("\(greeting()), ") +
-                        Text(username).font(AppFont.h2Bold) +
+                        Text(authVM.currentUser?.firstName ?? "Unknown").font(AppFont.h2Bold) +
                         Text(" \(greetingIcon())")
                     )
                     .font(AppFont.h2)
                     .padding(.horizontal, 24)
                     .padding(.top, 8)
                 }
-
+                
                 
                 Text("How are you today?")
                     .font(AppFont.body)
@@ -55,11 +73,19 @@ struct HomepageView: View {
                 ) {
                     PrimaryButton(label: "Track Mood")
                 }
-
+                .padding(.top, -15)
                 .onTapGesture {
                     trackingDate = Date() // lock the date when user taps
                 }
-
+                //  Testing healthkit retrieval steps and sleep
+                // VStack(spacing: 12) {
+                //                        Text("Steps Today: \(healthKitViewModel.stepsToday)")
+                //                        .font(.headline)
+                //                                .foregroundColor(.purple)
+                //                    Text(String(format: "Sleep Today: %.1f hours",healthKitViewModel.sleepToday))
+                //                        .font(.headline)
+                //                                .foregroundColor(.blue)
+                //    
                 
                 Spacer()
                 
@@ -108,7 +134,7 @@ struct HomepageView: View {
     let container = try! ModelContainer(for: MoodEntryModel.self)
     let context = container.mainContext
     let viewModel = CalendarViewModel(modelContext: context)
-
+    
     return HomepageView(viewModel: viewModel)
         .modelContainer(container)
 }

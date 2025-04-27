@@ -7,10 +7,17 @@
 
 import SwiftUI
 import SwiftData
+import Firebase
 
 @main
 struct SoWellApp: App {
+    
     @StateObject private var authVM = AuthViewModel()
+    
+    init() {
+            //Initializes Firebase when the app launches
+            FirebaseApp.configure()
+        }
 
     var body: some Scene {
         WindowGroup {

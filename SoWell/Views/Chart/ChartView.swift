@@ -4,81 +4,100 @@
 //
 //  Created by Mook Rattana on 14/04/2025.
 //
-
-import SwiftUI
-import Charts
-
-struct ChartView: View {
-    @StateObject private var viewModel = ChartViewModel()
-    
-    var body: some View {
-        VStack(spacing: 16) {
-            // Title
-            Text("Mood Tracker")
-                .font(.title2)
-                .bold()
-            
-            // Picker
-            Picker("Time Range", selection: $viewModel.selectedPeriod) {
-                ForEach(viewModel.periods, id: \.self) { period in
-                    Text(period)
-                }
-            }
-            .pickerStyle(SegmentedPickerStyle())
-            
-            
-            // Chart
-            VStack {
-                ChartCardView(title: "Mood Tracker") {
-                    Chart {
-                        ForEach(viewModel.moodData) { mood in
-                            LineMark(
-                                x: .value("Date", mood.date),
-                                y: .value("Mood", mood.moodScore)
-                            )
-                            .foregroundStyle(Color.purple)
-                            .symbol(Circle())
-                        }
-
-                        if viewModel.showSleep {
-                            ForEach(viewModel.sleepData) { sleep in
-                                LineMark(
-                                    x: .value("Date", sleep.date),
-                                    y: .value("Sleep Hours", sleep.hours)
-                                )
-                                .foregroundStyle(Color.blue.opacity(0.5))
-                            }
-                        }
-
-                        if viewModel.showSteps {
-                            ForEach(viewModel.stepsData) { step in
-                                LineMark(
-                                    x: .value("Date", step.date),
-                                    y: .value("Steps", step.steps)
-                                )
-                                .foregroundStyle(Color.green.opacity(0.5))
-                            }
-                        }
-                    }
-                    .chartYAxisLabel("Mood / Health")
-                    .frame(height: 250)
-                }
-            }
-            .padding()
-            .background(Color.white)
-            .cornerRadius(16)
-            .shadow(color: .black.opacity(0.05), radius: 8, x: 0, y: 4)
-            
-            // Filter View
-            ChartFilterView(showSleep: $viewModel.showSleep, showSteps: $viewModel.showSteps)
-        }
-        .padding()
-        .background(Color.AppColor.background) // <-- this is your custom color
-        .edgesIgnoringSafeArea(.bottom)
-    }
-}
-
-#Preview {
-    ChartView()
-}
-
+//import SwiftUI
+//import Charts
+//
+//struct ChartView: View {
+//    @StateObject private var viewModel = ChartViewModel()
+//
+//    func barMarks(for moodData: [MoodDataPoint], sleepData: [SleepDataPoint], stepsData: [StepsDataPoint], comparisonType: ChartViewModel.ComparisonType) -> [AnyView] {
+//        var marks: [AnyView] = []
+//
+//        for mood in moodData {
+//            marks.append(
+//                AnyView(
+//                    BarMark(
+//                        x: .value("Date", mood.date, unit: .day),
+//                        y: .value("Mood", mood.moodScore)
+//                    )
+//                    .foregroundStyle(Color.purple)
+//                    .position(by: .value("Metric", "Mood"))
+//                )
+//            )
+//
+//            let comparisonValue: Double
+//            let label: String
+//            let color: Color
+//
+//            switch comparisonType {
+//            case .sleep:
+//                comparisonValue = sleepData.first(where: { $0.date == mood.date })?.hours ?? 0
+//                label = "Sleep"
+//                color = .blue
+//            case .steps:
+//                let steps = stepsData.first(where: { $0.date == mood.date })?.steps ?? 0
+//                comparisonValue = Double(steps) / 1000.0
+//                label = "Steps"
+//                color = .green
+//            }
+//
+//            marks.append(
+//                AnyView(
+//                    BarMark(
+//                        x: .value("Date", mood.date, unit: .day),
+//                        y: .value(label, comparisonValue)
+//                    )
+//                    .foregroundStyle(color.opacity(0.6))
+//                    .position(by: .value("Metric", label))
+//                )
+//            )
+//        }
+//
+//        return marks
+//    }
+//
+//    var body: some View {
+//        VStack(spacing: 16) {
+//            // Title
+//            Text("Mood Tracker")
+//                .font(.title2)
+//                .bold()
+//
+//            // Picker for comparison type
+//            Picker("Compare With", selection: $viewModel.comparisonType) {
+//                ForEach(ChartViewModel.ComparisonType.allCases) { type in
+//                    Text(type.rawValue).tag(type)
+//                }
+//            }
+//            .pickerStyle(SegmentedPickerStyle())
+//            .padding(.horizontal)
+//
+//            // Chart
+//            VStack {
+//                ChartCardView(title: "Mood Tracker") {
+//                    let moodData = viewModel.moodData
+//                    let sleepData = viewModel.sleepData
+//                    let stepsData = viewModel.stepsData
+//                    let comparisonType = viewModel.comparisonType
+//
+//                    Chart {
+//                        ForEach(Array(barMarks(for: moodData, sleepData: sleepData, stepsData: stepsData, comparisonType: comparisonType).enumerated()), id: \.offset) { _, view in
+//                            view
+//                        }
+//                    }
+//
+//                    .chartYAxisLabel("Mood / Health")
+//                    .frame(height: 250)
+//                }
+//            }
+//
+//        }
+//        .padding()
+//        .background(Color.AppColor.background)
+//        .edgesIgnoringSafeArea(.bottom)
+//    }
+//}
+//
+//#Preview {
+//    ChartView()
+//}

@@ -12,7 +12,6 @@ struct CalendarView: View {
     @State private var selectedMood: Mood? = nil
     @State private var isAddingDiary = false
     @State private var isAddingNewMood = false
-
     
     @Environment(\.presentationMode) var presentationMode
     
