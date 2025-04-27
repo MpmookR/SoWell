@@ -62,9 +62,9 @@ struct RegisterView: View {
                     .font(AppFont.footnote)
                     .foregroundColor(.gray)
 
-                AppleButtonView()
-                    .environmentObject(authVM)
-                    .padding(.horizontal)
+//                AppleButtonView()
+//                    .environmentObject(authVM)
+//                    .padding(.horizontal)
             }
             .alert(isPresented: $showAlert) {
                 Alert(

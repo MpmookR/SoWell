@@ -7,10 +7,10 @@ struct ContentView: View {
     @State private var diaryText: String = ""
     
     init() {
-            // Use a dummy context just to satisfy @StateObject
-            let dummyContainer = try! ModelContainer(for: MoodEntryModel.self)
-            _calendarViewModel = StateObject(wrappedValue: CalendarViewModel(modelContext: dummyContainer.mainContext))
-        }
+        // Use a dummy context just to satisfy @StateObject
+        let dummyContainer = try! ModelContainer(for: MoodEntryModel.self)
+        _calendarViewModel = StateObject(wrappedValue: CalendarViewModel(modelContext: dummyContainer.mainContext))
+    }
     
     @State private var selectedTab = 1
     let tabBarHeight: CGFloat = 90 // Adjust height as needed
@@ -19,7 +19,7 @@ struct ContentView: View {
         
         GeometryReader { geometry in
             VStack(spacing: 0) {
-               
+                
                 // Main content area
                 //custom tabview will need the NavigationStack to wrap each view
                 ZStack {
@@ -36,7 +36,8 @@ struct ContentView: View {
                         }
                     case 2:
                         NavigationStack {
-                            ChartView()
+                            MultiChartDashboardView(modelContext: modelContext)
+                            
                         }
                     default:
                         NavigationStack {
@@ -86,7 +87,7 @@ struct ContentView: View {
             }
         }
     }
-
+    
 }
 
 #Preview {

@@ -1,5 +1,5 @@
 import SwiftUI
-import AuthenticationServices    // for SignInWithAppleButton
+//import AuthenticationServices    // for SignInWithAppleButton
 import CryptoKit                 // for hashing the nonce
 import FirebaseAuth              // for Firebase authentication
 
@@ -89,9 +89,9 @@ struct LoginView: View {
                     .font(AppFont.footnote)
                     .foregroundColor(.gray)
 
-                AppleButtonView()
-                    .environmentObject(authVM)
-                    .padding(.horizontal)
+//                AppleButtonView()
+//                    .environmentObject(authVM)
+//                    .padding(.horizontal)
             }
             .onChange(of: authVM.errorMessage) {
                 if !authVM.errorMessage.isEmpty {

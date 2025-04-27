@@ -1,31 +1,18 @@
-//
-//  ChartViewModel.swift
-//  SoWell
-//
-//  Created by Mook Rattana on 14/04/2025.
-//
-//Handles:
-//Hold the selected time range (Day, Week, etc.)
-//
-//Provide @Published chart data arrays
-//
-//Manage toggles (showSleep, showSteps)
-//
-//(Later) Pull real data from HealthKit
-//
-//Fetching mood data from SwiftData or mock source
-//
-//Processing + merging data into [MoodDataPoint], [SleepDataPoint], etc.
-//
-// Can expose @Published var moodData: [MoodDataPoint] etc. so your ChartView updates reactively.
 import SwiftUI
 import Combine
+import SwiftData
 
-class ChartViewModel : ObservableObject {
+class ChartViewModel: ObservableObject {
+//    @Environment(\.modelContext) private var modelContext
+    enum ComparisonType: String, CaseIterable, Identifiable {
+        case sleep = "Sleep"
+        case steps = "Steps"
+        
+        var id: String { rawValue }
+    }
     
+    @Published var comparisonType: ComparisonType = .sleep
     @Published var selectedPeriod = "Week"
-    @Published var showSleep = false
-    @Published var showSteps = false
     
     @Published var moodData: [MoodDataPoint] = []
     @Published var sleepData: [SleepDataPoint] = []
@@ -33,30 +20,91 @@ class ChartViewModel : ObservableObject {
     
     let periods = ["Day", "Week", "Month", "Year"]
     
-    init() {
-        loadMockData()
-        //Replace loadMockData() with loadHealthKitData(for period: String)
-    }
-    //function will simulate 7 days of fake dara
+    let useMockData = false // Toggle this between true (mock) or false(realdata)
+    let modelContext: ModelContext
+    
+    init(modelContext: ModelContext) {
+            self.modelContext = modelContext
+            
+            if useMockData {
+                loadMockData()
+            } else {
+                fetchRealData()
+            }
+        }
+    
+    
     func loadMockData() {
-        let today = Date() //gives current date and time
-        moodData = (0..<7).map { offset in //loops 0 to 6 and for each day it will run the code inside each day (7 days) building an array of moodDataPoint values
-            MoodDataPoint(date: Calendar.current.date(byAdding: .day, value: -offset, to: today)!, moodScore: Double.random(in: 1...5))
-        }.reversed()
-        // selects a date, adds a day on, the offset makes it a day less (-1 will = yesterday etc). Double random will provide a fake mood score.
-        //.reversed() reverses it so it will start with the oldest date until today.
-        
-        sleepData = (0..<7).map { offset in
-            SleepDataPoint(date: Calendar.current.date(byAdding: .day, value: -offset, to: today)!, hours: Double.random(in: 4...9))
-        }.reversed()
-        
-        stepsData = (0..<7).map { offset in
-            StepsDataPoint(date: Calendar.current.date(byAdding: .day, value: -offset, to: today)!, steps: Int.random(in: 3000...9000))
-        }.reversed()
+        moodData = ChartDataService.generateMoodData(for: selectedPeriod)
+        stepsData = ChartDataService.generateStepsData(for: selectedPeriod)
+        sleepData = ChartDataService.generateSleepData(for: selectedPeriod)
     }
     
+    func fetchRealData() {
+        do {
+            let moodEntryModels = try modelContext.fetch(FetchDescriptor<MoodEntryModel>())
+            
+            moodData = moodEntryModels.map { entry in
+                MoodDataPoint(date: entry.date, moodScore: moodScore(for: entry.moodLabel))
+            }
+            
+            // sleepData and stepsData will come from HealthKit separately
+            
+        } catch {
+            print("Error fetching mood entries: \(error)")
+        }
+    }
+
     
+    func moodScore(for label: String) -> Double {
+        return Double(Mood.all.first(where: { $0.label.lowercased() == label.lowercased() })?.score ?? 5)
+    }
+    // Switching moodAndStepsData for moodData and stepsData arrays
+    var moodAndStepsData: [GroupedMetricRecord] {
+        moodData.map { mood in
+            let matchingSteps = stepsData.first(where: { $0.date.isSameDay(as: mood.date) })?.steps ?? 0
+            return GroupedMetricRecord(date: mood.date, mood: mood.moodScore, metricValue: Double(matchingSteps) / 1000.0)
+        }
+    }
     
+    var moodAndSleepData: [GroupedMetricRecord] {
+        moodData.map { mood in
+            let matchingSleep = sleepData.first(where: { $0.date.isSameDay(as: mood.date) })?.hours ?? 0.0
+            return GroupedMetricRecord(date: mood.date, mood: mood.moodScore, metricValue: matchingSleep)
+        }
+    }
     
+    // MARK: - Insights please add this part in
+    
+    var moodStepInsights: [String] {
+        let highStepDays = moodAndStepsData.filter { $0.metricValue > 10 } // 10k steps
+        let avgMoodHighSteps = highStepDays.map { $0.mood }.average()
+        let avgMoodAll = moodAndStepsData.map { $0.mood }.average()
+        
+        if avgMoodHighSteps > avgMoodAll {
+            return ["Your mood improves on days when you walk more than 10,000 steps."]
+        } else {
+            return ["No strong mood boost detected from high step counts yet."]
+        }
+    }
+    
+    var moodSleepInsights: [String] {
+        let lowSleepDays = moodAndSleepData.filter { $0.metricValue < 6 }
+        let avgMoodLowSleep = lowSleepDays.map { $0.mood }.average()
+        let avgMoodAll = moodAndSleepData.map { $0.mood }.average()
+        
+        if avgMoodLowSleep < avgMoodAll {
+            return ["Lower sleep duration seems linked to worse mood."]
+        } else {
+            return ["Your sleep duration doesn't seem to affect your mood significantly."]
+        }
+    }
 }
 
+    // Helper extension
+    private extension Array where Element == Double {
+        func average() -> Double {
+            guard !self.isEmpty else { return 0 }
+            return self.reduce(0, +) / Double(self.count)
+        }
+    }

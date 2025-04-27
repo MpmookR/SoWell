@@ -3,14 +3,14 @@ import SwiftData
 import FirebaseAuth
 
 struct HomepageView: View {
-//    let username = "Michael"
+    //    let username = "Michael"
     @EnvironmentObject var authVM: AuthViewModel
     @ObservedObject var viewModel: CalendarViewModel
-
+    @StateObject private var healthKitViewModel = HealthKitViewModel()
     @State private var selectedMood: Mood? = Mood.all.first { $0.label == "Excellent" }
     @State private var currentMood: Mood = Mood.all.first!
     @State private var trackingDate: Date = Date()
-
+    
     var body: some View {
         ZStack {
             Color.AppColor.background
@@ -23,7 +23,7 @@ struct HomepageView: View {
                             .foregroundColor(.gray)
                     }
                     .frame(maxWidth: .infinity)
-
+                    
                     NavigationLink(destination: ProfileView()) {
                         Circle()
                             .fill(Color.AppColor.button)
@@ -36,7 +36,7 @@ struct HomepageView: View {
                     }
                 }
                 .padding(.horizontal, 24)
-
+                
                 HStack {
                     (
                         Text("\(greeting()), ") +
@@ -47,7 +47,7 @@ struct HomepageView: View {
                     .padding(.horizontal, 24)
                     .padding(.top, 8)
                 }
-
+                
                 
                 Text("How are you today?")
                     .font(AppFont.body)
@@ -73,11 +73,19 @@ struct HomepageView: View {
                 ) {
                     PrimaryButton(label: "Track Mood")
                 }
-
+                
                 .onTapGesture {
                     trackingDate = Date() // lock the date when user taps
                 }
-
+                //  Testing healthkit retrieval steps and sleep
+                // VStack(spacing: 12) {
+                //                        Text("Steps Today: \(healthKitViewModel.stepsToday)")
+                //                        .font(.headline)
+                //                                .foregroundColor(.purple)
+                //                    Text(String(format: "Sleep Today: %.1f hours",healthKitViewModel.sleepToday))
+                //                        .font(.headline)
+                //                                .foregroundColor(.blue)
+                //    
                 
                 Spacer()
                 
@@ -126,7 +134,7 @@ struct HomepageView: View {
     let container = try! ModelContainer(for: MoodEntryModel.self)
     let context = container.mainContext
     let viewModel = CalendarViewModel(modelContext: context)
-
+    
     return HomepageView(viewModel: viewModel)
         .modelContainer(container)
 }
