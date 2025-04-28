@@ -1,4 +1,3 @@
-
 import SwiftUI
 import Charts
 import SwiftData
@@ -75,7 +74,7 @@ struct MultiChartDashboardView: View {
             .padding(.horizontal)
             
             Chart {
-                ForEach(viewModel.moodData, id: \.date) { item in
+                ForEach(filteredMoodData, id: \.date) { item in
                     BarMark(
                         x: .value("Date", item.date, unit: selectedPeriod == .year ? .month : .day),
                         y: .value("Mood", item.moodScore)
@@ -112,9 +111,13 @@ struct MultiChartDashboardView: View {
     
     private func generateMoodAndStepsData() -> [GroupedMetricRecord] {
         if viewModel.useMockData {
-            return viewModel.moodAndStepsData
+            //            return viewModel.moodAndStepsData
+            //            return Array(viewModel.moodAndStepsData.prefix(7)) // Only 7 for mock
+            return Array(viewModel.moodAndStepsData.sorted { $0.date > $1.date }.prefix(7)).reversed()
         } else {
-            return viewModel.moodData.map { mood in
+            //            return viewModel.moodData.map { mood in
+            //            return Array(viewModel.moodData.prefix(7)).map { mood in
+            return Array(viewModel.moodData.sorted { $0.date > $1.date }.prefix(7)).reversed().map { mood in
                 let day = Calendar.current.startOfDay(for: mood.date)
                 let steps = Double(healthKitViewModel.stepsLast7Days[day] ?? 0) / 1000.0
                 return GroupedMetricRecord(date: mood.date, mood: mood.moodScore, metricValue: steps)
@@ -124,13 +127,28 @@ struct MultiChartDashboardView: View {
     
     private func generateMoodAndSleepData() -> [GroupedMetricRecord] {
         if viewModel.useMockData {
-            return viewModel.moodAndSleepData
+            //            return viewModel.moodAndSleepData
+            //            return Array(viewModel.moodAndSleepData.prefix(7)) // Only 7 for mock
+            return Array(viewModel.moodAndSleepData.sorted { $0.date > $1.date }.prefix(7)).reversed()
         } else {
-            return viewModel.moodData.map { mood in
+            //            return viewModel.moodData.map { mood in
+            return Array(viewModel.moodData.sorted { $0.date > $1.date }.prefix(7)).reversed().map { mood in
                 let day = Calendar.current.startOfDay(for: mood.date)
                 let sleep = healthKitViewModel.sleepLast7Days[day] ?? 0.0
                 return GroupedMetricRecord(date: mood.date, mood: mood.moodScore, metricValue: sleep)
             }
+        }
+    }
+    
+    private var filteredMoodData: [MoodDataPoint] {
+        let sortedData = viewModel.moodData.sorted { $0.date > $1.date } // Newest first
+        switch selectedPeriod {
+        case .week:
+            return Array(sortedData.prefix(7)).reversed() // Oldest first for chart left-to-right
+        case .month:
+            return Array(sortedData.prefix(30)).reversed()
+        case .year:
+            return Array(sortedData.prefix(12)).reversed()
         }
     }
     
@@ -152,3 +170,4 @@ extension Date {
         return cal.isDate(self, inSameDayAs: other)
     }
 }
+
