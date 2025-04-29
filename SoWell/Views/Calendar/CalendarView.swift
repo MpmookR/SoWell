@@ -131,7 +131,7 @@ struct CalendarView: View {
                 isPresented: $isEditingMood,
                 selectedMood: $selectedMood,
                 onConfirm: { mood in
-                    // Update view model when mood is selected
+                    // Update viewmodel when mood is selected
                     let currentDiary = viewModel.entry(for: selectedDate)?.diaryText ?? ""
                     viewModel.trackMood(on: selectedDate, mood: mood, diary: currentDiary)
                 }

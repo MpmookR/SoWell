@@ -2,6 +2,11 @@ import Foundation
 import SwiftUI
 import SwiftData
 
+//cloud sync
+//import FirebaseFirestore
+//import FirebaseAuth
+
+
 class CalendarViewModel: ObservableObject {
     @Published var entries: [Date: MoodEntry] = [:]
     
@@ -54,6 +59,10 @@ class CalendarViewModel: ObservableObject {
                
                // Save to in-memory for UI
                entries[day] = MoodEntry(date: day, mood: mood, diaryText: diary)
+               
+               // NEW: Save to Firestore as cloud backup
+//               FirebaseMoodService.uploadMood(date: day, mood: mood, diary: diary)
+
            } catch {
                print("Error saving mood entry: \(error)")
            }
@@ -90,4 +99,6 @@ class CalendarViewModel: ObservableObject {
     func trackedDates(for month: Date) -> [Date] {
         entries.keys.filter { Calendar.current.isDate($0, equalTo: month, toGranularity: .month) }
     }
+    
+
 }

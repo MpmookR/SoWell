@@ -3,7 +3,7 @@ import SwiftData
 import FirebaseAuth
 
 struct HomepageView: View {
-    //    let username = "Michael"
+
     @EnvironmentObject var authVM: AuthViewModel
     @ObservedObject var viewModel: CalendarViewModel
     @StateObject private var healthKitViewModel = HealthKitViewModel()
