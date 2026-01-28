@@ -7,8 +7,6 @@ Built with **SwiftUI**, **SwiftData**, and **MVVM**, the app integrates **Apple 
 > 👩🏽‍💻 This project was developed collaboratively as part of a university coursework.
 > Built collaboratively with [Kayley Govinden](https://github.com/KROSE95)
 
----
-
 ## 🔗 Related link
 - 🌐 **[Demo & Case Study](https://mpmookr.wixsite.com/mysite/sowell)**
 
